@@ -27,13 +27,24 @@ public class NotificationController {
         this.cacheManager = cacheManager;
     }
 
-    @GetMapping
-    public List<Notification> getMyNotifications(
-            Authentication authentication) {
-        String email = authentication.getName();
+    @GetMapping("/all")
+    public List<Notification> getMyNotifications(Authentication authentication) {
 
-        return notificationRepository
-                .findByRecipientEmailIgnoreCaseOrderByCreatedAtDesc(email);
+
+        if (authentication == null) {
+            throw new RuntimeException("Authentication is null");
+        }
+
+        System.out.println("USER EMAIL: " + authentication.getName());
+
+        List<Notification> notifications =
+                notificationRepository
+                    .findByRecipientEmailIgnoreCaseOrderByCreatedAtDesc(
+                        authentication.getName()
+                    );
+
+
+        return notifications;
     }
 
     @GetMapping("/unread-count")
